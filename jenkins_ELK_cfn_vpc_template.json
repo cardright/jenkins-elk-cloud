@@ -1,0 +1,512 @@
+{
+  "Description": "Cloud Formation Template.  Template Created: 2015-12-07 22:21:32",
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "c1.medium": {
+        "Arch": "PV64"
+      },
+      "c1.xlarge": {
+        "Arch": "PV64"
+      },
+      "c3.2xlarge": {
+        "Arch": "HVM64"
+      },
+      "c3.4xlarge": {
+        "Arch": "HVM64"
+      },
+      "c3.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "c3.large": {
+        "Arch": "HVM64"
+      },
+      "c3.xlarge": {
+        "Arch": "HVM64"
+      },
+      "cc2.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "cr1.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "g2.2xlarge": {
+        "Arch": "HVMG2"
+      },
+      "hi1.4xlarge": {
+        "Arch": "HVM64"
+      },
+      "hs1.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "i2.2xlarge": {
+        "Arch": "HVM64"
+      },
+      "i2.4xlarge": {
+        "Arch": "HVM64"
+      },
+      "i2.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "i2.xlarge": {
+        "Arch": "HVM64"
+      },
+      "m1.large": {
+        "Arch": "PV64"
+      },
+      "m1.medium": {
+        "Arch": "PV64"
+      },
+      "m1.small": {
+        "Arch": "PV64"
+      },
+      "m1.xlarge": {
+        "Arch": "PV64"
+      },
+      "m2.2xlarge": {
+        "Arch": "PV64"
+      },
+      "m2.4xlarge": {
+        "Arch": "PV64"
+      },
+      "m2.xlarge": {
+        "Arch": "PV64"
+      },
+      "m3.2xlarge": {
+        "Arch": "HVM64"
+      },
+      "m3.large": {
+        "Arch": "HVM64"
+      },
+      "m3.medium": {
+        "Arch": "HVM64"
+      },
+      "m3.xlarge": {
+        "Arch": "HVM64"
+      },
+      "r3.2xlarge": {
+        "Arch": "HVM64"
+      },
+      "r3.4xlarge": {
+        "Arch": "HVM64"
+      },
+      "r3.8xlarge": {
+        "Arch": "HVM64"
+      },
+      "r3.large": {
+        "Arch": "HVM64"
+      },
+      "r3.xlarge": {
+        "Arch": "HVM64"
+      },
+      "t1.micro": {
+        "Arch": "PV64"
+      },
+      "t2.medium": {
+        "Arch": "HVM64"
+      },
+      "t2.micro": {
+        "Arch": "HVM64"
+      },
+      "t2.small": {
+        "Arch": "HVM64"
+      }
+    },
+    "ubuntu14AWSRegionArch2AMI": {
+      "ap-northeast-1": {
+        "HVM64": "ami-936d9d93"
+      },
+      "ap-southeast-1": {
+        "HVM64": "ami-96f1c1c4"
+      },
+      "ap-southeast-2": {
+        "HVM64": "ami-69631053"
+      },
+      "eu-central-1": {
+        "HVM64": "ami-accff2b1"
+      },
+      "eu-west-1": {
+        "HVM64": "ami-47a23a30"
+      },
+      "sa-east-1": {
+        "HVM64": "ami-4d883350"
+      },
+      "us-east-1": {
+        "HVM64": "ami-d05e75b8"
+      },
+      "us-west-1": {
+        "HVM64": "ami-df6a8b9b"
+      },
+      "us-west-2": {
+        "HVM64": "ami-5189a661"
+      }
+    }
+  },
+  "Outputs": {
+    "JenkinsURL": {
+      "Description": "Jenkins   application URL",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://",
+            {
+              "Fn::GetAtt": [
+                "jenkinsInstance1",
+                "PublicIp"
+              ]
+            },
+            "/jenkins"
+          ]
+        ]
+      }
+    }
+  },
+  "Parameters": {
+    "jenkinsPWParam": {
+      "ConstraintDescription": "Must be greater than 5 characters",
+      "Description": "Jenkins default 'user' Password",
+      "MinLength": 5,
+      "NoEcho": true,
+      "Type": "String"
+    },
+    "jenkinsServerParam": {
+      "AllowedValues": [
+        "t2.micro",
+        "t2.small",
+        "t2.medium",
+        "m3.medium",
+        "m3.large",
+        "m3.xlarge",
+        "m3.2xlarge",
+        "c3.large",
+        "c3.xlarge",
+        "c3.2xlarge",
+        "c3.4xlarge",
+        "c3.8xlarge",
+        "r3.large",
+        "r3.xlarge",
+        "r3.2xlarge",
+        "r3.4xlarge",
+        "r3.8xlarge",
+        "i2.xlarge",
+        "i2.2xlarge",
+        "i2.4xlarge",
+        "i2.8xlarge",
+        "hi1.4xlarge",
+        "hs1.8xlarge",
+        "cr1.8xlarge",
+        "cc2.8xlarge",
+        "cg1.4xlarge"
+      ],
+      "ConstraintDescription": "Must be a valid EC2 instance type.",
+      "Default": "m3.medium",
+      "Description": "Jenkins Server EC2 HVM Instance type",
+      "Type": "String"
+    },
+    "sshIPParam": {
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "Must be valid IP CIDR range in the form of x.x.x.x/x.",
+      "Default": "0.0.0.0/0",
+      "MaxLength": 18,
+      "MinLength": 9,
+      "Type": "String"
+    },
+    "sshKeyParam": {
+      "ConstraintDescription": "Must Not be Empty",
+      "Description": "SSH KeyPair Name used to SSH into Instances",
+      "MinLength": 3,
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "AttachGateway": {
+      "Properties": {
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "VpcId": {
+          "Ref": "ElkVPC"
+        }
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment"
+    },
+    "ElkVPC": {
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": "true",
+        "EnableDnsSupport": "true",
+        "Tags": [
+          {
+            "Key": "Candidate",
+            "Value": "mkowalsky"
+          },
+          {
+            "Key": "Name",
+            "Value": "ELK VPC"
+          }
+        ]
+      },
+      "Type": "AWS::EC2::VPC"
+    },
+    "InternetGateway": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Candidate",
+            "Value": "mkowalsky"
+          }
+        ]
+      },
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "Route": {
+      "DependsOn": "AttachGateway",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "RouteTableId": {
+          "Ref": "publicRouteTable"
+        }
+      },
+      "Type": "AWS::EC2::Route"
+    },
+    "elkInstance1": {
+      "DependsOn": "InternetGateway",
+      "Properties": {
+        "ImageId": {
+          "Fn::FindInMap": [
+            "ubuntu14AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "jenkinsServerParam"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "InstanceType": {
+          "Ref": "jenkinsServerParam"
+        },
+        "KeyName": {
+          "Ref": "sshKeyParam"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "publicToolsSG1"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "publicToolsSubnet1"
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "CandidateName",
+            "Value": "mkowalsky"
+          },
+          {
+            "Key": "Name",
+            "Value": "ELK Server"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "service ufw stop\n",
+                "apt-get update\n",
+                "apt-get python-pycurl -y\n",
+                "apt-get install software-properties-common -y\n",
+                "apt-add-repository ppa:ansible/ansible\n",
+                "apt-get update\n",
+                "apt-get install ansible -y\n",
+                "wget https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/cm_tool/elk_stack.yml\n",
+                "ansible-playbook -i \"127.0.0.1\" elk_stack.yml"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+    "jenkinsInstance1": {
+      "DependsOn": "InternetGateway",
+      "Properties": {
+        "ImageId": {
+          "Fn::FindInMap": [
+            "ubuntu14AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "jenkinsServerParam"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "InstanceType": {
+          "Ref": "jenkinsServerParam"
+        },
+        "KeyName": {
+          "Ref": "sshKeyParam"
+        },
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeleteOnTermination": "true",
+            "DeviceIndex": "0",
+            "GroupSet": [
+              {
+                "Ref": "publicToolsSG1"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "publicToolsSubnet1"
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "CandidateName",
+            "Value": "mkowalsky"
+          },
+          {
+            "Key": "Name",
+            "Value": "Jenkins Server"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "service ufw stop\n",
+                "apt-get update\n",
+                "apt-get install python-pip -y\n",
+                "pip install awscli\n",
+                "wget -O ~/bitnami-jenkins-1.639-0-linux-x64-installer.run https://bitnami.com/redirect/to/83504/bitnami-jenkins-1.639-0-linux-x64-installer.run?bypassauth=false\n",
+                "chmod 754 ~/bitnami-jenkins-1.639-0-linux-x64-installer.run\n",
+                "~/bitnami-jenkins-1.639-0-linux-x64-installer.run --prefix /opt/jenkins --mode unattended --base_password ",
+                {
+                  "Ref": "jenkinsPWParam"
+                },
+                "\n"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+    "publicRouteTable": {
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Candidate",
+            "Value": "mkowalsky"
+          }
+        ],
+        "VpcId": {
+          "Ref": "ElkVPC"
+        }
+      },
+      "Type": "AWS::EC2::RouteTable"
+    },
+    "publicToolsSG1": {
+      "Properties": {
+        "GroupDescription": "Enable Access to Servers",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": {
+              "Ref": "sshIPParam"
+            },
+            "FromPort": "22",
+            "IpProtocol": "tcp",
+            "ToPort": "22"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "80",
+            "IpProtocol": "tcp",
+            "ToPort": "80"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "443",
+            "IpProtocol": "tcp",
+            "ToPort": "443"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "5601",
+            "IpProtocol": "tcp",
+            "ToPort": "5601"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Default Security Group"
+          }
+        ],
+        "VpcId": {
+          "Ref": "ElkVPC"
+        }
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "publicToolsSubnet1": {
+      "Properties": {
+        "CidrBlock": "10.0.8.0/24",
+        "MapPublicIpOnLaunch": "true",
+        "Tags": [
+          {
+            "Key": "Candidate",
+            "Value": "mkowalsky"
+          },
+          {
+            "Key": "Name",
+            "Value": "Public Tools Subnet"
+          }
+        ],
+        "VpcId": {
+          "Ref": "ElkVPC"
+        }
+      },
+      "Type": "AWS::EC2::Subnet"
+    },
+    "publicToolsSubnetRouteTableAssoc1": {
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "publicRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "publicToolsSubnet1"
+        }
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation"
+    }
+  }
+}
