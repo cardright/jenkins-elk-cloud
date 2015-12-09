@@ -42,7 +42,7 @@ quad_zero_ip = constants.QUAD_ZERO  # '0.0.0.0/0'
 candidate_id= 'candidate-8578e887'
 candidate_name= 'mkowalsky'
 
-add_elk_instance = True 
+add_elk_instance = False
 
 t = Template()
 t.add_description("""\
@@ -242,7 +242,7 @@ jenkins_ec2_instance = t.add_resource(Instance(
                       FindInMap(mappings.AWSInstanceType2Arch[mappings.logicalName], Ref(jenkins_instance_type_param), 'Arch')),
 
     InstanceType = Ref(jenkins_instance_type_param),
-    IamInstanceProfile= Ref(jenkinsRole),
+    IamInstanceProfile= Ref(cfninstanceprofile),
     KeyName=Ref(ssh_key_param),
     UserData=user_data.jenkins_userData(Ref(jenkins_password_param)),
     NetworkInterfaces=[

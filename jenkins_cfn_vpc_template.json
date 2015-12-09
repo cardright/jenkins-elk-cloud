@@ -1,5 +1,5 @@
 {
-  "Description": "Cloud Formation Template.  Template Created: 2015-12-08 22:00:38",
+  "Description": "Cloud Formation Template.  Template Created: 2015-12-08 23:00:52",
   "Mappings": {
     "AWSInstanceType2Arch": {
       "c1.medium": {
@@ -276,7 +276,7 @@
       "DependsOn": "InternetGateway",
       "Properties": {
         "IamInstanceProfile": {
-          "Ref": "jenkinsRole"
+          "Ref": "jenkinsRoleProfile"
         },
         "ImageId": {
           "Fn::FindInMap": [
