@@ -18,6 +18,16 @@ from troposphere.ec2 import Instance, NetworkAcl, Route, \
     EIPAssociation, NetworkInterfaceProperty, Volume,VolumeAttachment
 
 from troposphere import constants
+
+from troposphere.iam import Role, InstanceProfile
+
+from troposphere import iam  # avoid conflict with awacs.aws.Policy, so iam.Policy
+
+from awacs.aws import Allow, Statement, Principal, Policy
+from awacs.sts import AssumeRole
+# Actions
+from awacs.cloudformation import CancelUpdateStack, CreateStack, ListStackResources, DescribeStackEvents,  UpdateStack
+from awacs.ec2 import RunInstances,DescribeInstances,DescribeInstanceStatus
 # Script Helpers
 
 import mappings
@@ -32,7 +42,7 @@ quad_zero_ip = constants.QUAD_ZERO  # '0.0.0.0/0'
 candidate_id= 'candidate-8578e887'
 candidate_name= 'mkowalsky'
 
-add_elk_instance = False
+add_elk_instance = True 
 
 t = Template()
 t.add_description("""\
@@ -185,6 +195,46 @@ public_tools_sg = t.add_resource(
         ]
     ))
 
+jenkinsRole = t.add_resource(Role(
+    "jenkinsRole",
+    AssumeRolePolicyDocument=Policy(
+        Statement=[
+            Statement(
+                Effect=Allow,
+                Action=[AssumeRole],
+                Principal=Principal("Service", ["ec2.amazonaws.com"]))
+            ]
+        ),
+    Path="/",
+    Policies=[iam.Policy(PolicyName="JenkinsPolicies",
+                         PolicyDocument=Policy(
+                             Statement=[
+                                 Statement(Effect=Allow,
+                                           Action=[CancelUpdateStack,
+                                                   CreateStack,
+                                                   ListStackResources,
+                                                   DescribeStackEvents,
+                                                   UpdateStack],
+                                           Resource=[Ref('AWS::StackId')],),
+                                 Statement(Effect=Allow,
+                                           Action=[RunInstances,
+                                                   DescribeInstances,
+                                                   DescribeInstanceStatus],
+                                           Resource=["*"])
+                             ]
+                         ))
+
+    ],
+    ),
+)
+
+
+cfninstanceprofile = t.add_resource(InstanceProfile(
+    "jenkinsRoleProfile",
+    Roles=[Ref(jenkinsRole)]
+))
+
+
 
 jenkins_ec2_instance = t.add_resource(Instance(
     "jenkinsInstance1",
@@ -192,6 +242,7 @@ jenkins_ec2_instance = t.add_resource(Instance(
                       FindInMap(mappings.AWSInstanceType2Arch[mappings.logicalName], Ref(jenkins_instance_type_param), 'Arch')),
 
     InstanceType = Ref(jenkins_instance_type_param),
+    IamInstanceProfile= Ref(jenkinsRole),
     KeyName=Ref(ssh_key_param),
     UserData=user_data.jenkins_userData(Ref(jenkins_password_param)),
     NetworkInterfaces=[
@@ -229,6 +280,9 @@ if add_elk_instance:
         DependsOn=internetGateway.title
     ))
 
+
+
+
 # Attaches volume to instance.
 # Default Volume size 20GB
 # Default Mount Point is /dev/xvdb
@@ -253,5 +307,5 @@ with open(json_path, 'w') as f:
     f.write(t.to_json(indent=2))
 print ('DONE')
 
-# import subprocess # Validate with aws commandline tool
-# subprocess.call("aws cloudformation validate-template --template-body file://{0}".format(json_path) --profile rean --region US-East-1)
+import subprocess # Validate with aws commandline tool
+subprocess.call("aws cloudformation validate-template --profile rean --region us-east-1 --template-body file://{0}".format(json_path)) #--profile rean --region US-East-1)

@@ -1,5 +1,5 @@
 {
-  "Description": "Cloud Formation Template.  Template Created: 2015-12-07 22:21:32",
+  "Description": "Cloud Formation Template.  Template Created: 2015-12-08 22:01:20",
   "Mappings": {
     "AWSInstanceType2Arch": {
       "c1.medium": {
@@ -348,6 +348,9 @@
     "jenkinsInstance1": {
       "DependsOn": "InternetGateway",
       "Properties": {
+        "IamInstanceProfile": {
+          "Ref": "jenkinsRole"
+        },
         "ImageId": {
           "Fn::FindInMap": [
             "ubuntu14AWSRegionArch2AMI",
@@ -419,6 +422,72 @@
         }
       },
       "Type": "AWS::EC2::Instance"
+    },
+    "jenkinsRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "cloudformation:CancelUpdateStack",
+                    "cloudformation:CreateStack",
+                    "cloudformation:ListStackResources",
+                    "cloudformation:DescribeStackEvents",
+                    "cloudformation:UpdateStack"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    {
+                      "Ref": "AWS::StackId"
+                    }
+                  ]
+                },
+                {
+                  "Action": [
+                    "ec2:RunInstances",
+                    "ec2:DescribeInstances",
+                    "ec2:DescribeInstanceStatus"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            },
+            "PolicyName": "JenkinsPolicies"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::Role"
+    },
+    "jenkinsRoleProfile": {
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "jenkinsRole"
+          }
+        ]
+      },
+      "Type": "AWS::IAM::InstanceProfile"
     },
     "publicRouteTable": {
       "Properties": {
