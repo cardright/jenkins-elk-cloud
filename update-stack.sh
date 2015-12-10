@@ -1,0 +1,1 @@
+aws cloudformation update-stack --template-body file://$2 --stack-name $1 --region $3 --parameters ParameterKey=jenkinsPWParam,UsePreviousValue=true ParameterKey=sshKeyParam,UsePreviousValue=true --capabilities CAPABILITY_IAM

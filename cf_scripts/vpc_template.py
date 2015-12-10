@@ -27,7 +27,7 @@ from awacs.aws import Allow, Statement, Principal, Policy
 from awacs.sts import AssumeRole
 # Actions
 from awacs.cloudformation import CancelUpdateStack, CreateStack, ListStackResources, DescribeStackEvents,  UpdateStack
-from awacs.ec2 import RunInstances,DescribeInstances,DescribeInstanceStatus
+from awacs.ec2 import RunInstances,DescribeInstances,DescribeInstanceStatus,AuthorizeSecurityGroupIngress
 # Script Helpers
 
 import mappings
@@ -102,12 +102,6 @@ t.add_mapping(mappings.ubuntu_14_AWSRegionArch2AMI[mappings.logicalName],
 # Instance Type to architecture type -> HVM64, PV64, etc
 t.add_mapping(mappings.AWSInstanceType2Arch[mappings.logicalName],
               mappings.AWSInstanceType2Arch[mappings.mapping])
-
-
-# Alls Servers Centos 7
-# Hadoop Cluster and Application Server
-# t.add_mapping(mappings.centos_7_AWSRegionArch2AMI[mappings.logicalName],
-#               mappings.centos_7_AWSRegionArch2AMI[mappings.mapping])
 
 
 VPC = t.add_resource(
@@ -187,7 +181,7 @@ public_tools_sg = t.add_resource(
                 FromPort='443',
                 ToPort='443',
                 CidrIp=quad_zero_ip),
-            SecurityGroupRule(              # Web Interface
+            SecurityGroupRule(              # Web Interface Kibana
                 IpProtocol='tcp',
                 FromPort='5601',
                 ToPort='5601',
@@ -219,7 +213,8 @@ jenkinsRole = t.add_resource(Role(
                                  Statement(Effect=Allow,
                                            Action=[RunInstances,
                                                    DescribeInstances,
-                                                   DescribeInstanceStatus],
+                                                   DescribeInstanceStatus,
+                                                   AuthorizeSecurityGroupIngress],
                                            Resource=["*"])
                              ]
                          ))
@@ -244,7 +239,7 @@ jenkins_ec2_instance = t.add_resource(Instance(
     InstanceType = Ref(jenkins_instance_type_param),
     IamInstanceProfile= Ref(cfninstanceprofile),
     KeyName=Ref(ssh_key_param),
-    UserData=user_data.jenkins_userData(Ref(jenkins_password_param)),
+    UserData=user_data.jenkins_userData(Ref(jenkins_password_param),Ref('AWS::Region'),Ref('AWS::StackId')),
     NetworkInterfaces=[
         NetworkInterfaceProperty(
             GroupSet=[Ref(public_tools_sg)],

@@ -33,7 +33,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>aws cloudformation update-stack ${stack_name} --template-body file://{input_file} --region ${stack_region}</command>
+      <command>/opt/update-stack.sh ${stack_name} ${input_file} ${stack_region}</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

@@ -1,5 +1,5 @@
 {
-  "Description": "Cloud Formation Template.  Template Created: 2015-12-08 23:00:52",
+  "Description": "Cloud Formation Template.  Template Created: 2015-12-09 21:53:25",
   "Mappings": {
     "AWSInstanceType2Arch": {
       "c1.medium": {
@@ -342,6 +342,27 @@
                 {
                   "Ref": "jenkinsPWParam"
                 },
+                "\n",
+                "wget -O /tmp/jenkins_elk.json https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/jenkins_ELK_cfn_vpc_template.json\n",
+                "wget -O /opt/update-stack.sh https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/update-stack.sh\n",
+                "chmod 754 /opt/update-stack.sh\n",
+                "wget -O /tmp/jenkinsJob.xml https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/jenkinsJob.xml\n",
+                "curl -u user:",
+                {
+                  "Ref": "jenkinsPWParam"
+                },
+                " -X POST -H \"Content-Type:application/xml\" -d @/tmp/jenkinsJob.xml \"http://localhost/jenkins/createItem?name=DeployELK\" \ncurl -u user:",
+                {
+                  "Ref": "jenkinsPWParam"
+                },
+                " -X POST http://localhost/jenkins/job/DeployELK/buildWithParameters?stack_name=",
+                {
+                  "Ref": "AWS::StackId"
+                },
+                "&input_file=/tmp/jenkins_elk.json&stack_region=",
+                {
+                  "Ref": "AWS::Region"
+                },
                 "\n"
               ]
             ]
@@ -391,7 +412,8 @@
                   "Action": [
                     "ec2:RunInstances",
                     "ec2:DescribeInstances",
-                    "ec2:DescribeInstanceStatus"
+                    "ec2:DescribeInstanceStatus",
+                    "ec2:AuthorizeSecurityGroupIngress"
                   ],
                   "Effect": "Allow",
                   "Resource": [
