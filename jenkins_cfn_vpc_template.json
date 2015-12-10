@@ -1,5 +1,5 @@
 {
-  "Description": "Cloud Formation Template.  Template Created: 2015-12-09 21:53:25",
+  "Description": "Cloud Formation Template.  Template Created: 2015-12-09 23:12:17",
   "Mappings": {
     "AWSInstanceType2Arch": {
       "c1.medium": {
@@ -410,6 +410,7 @@
                 },
                 {
                   "Action": [
+                    "ec2:StartInstances",
                     "ec2:RunInstances",
                     "ec2:DescribeInstances",
                     "ec2:DescribeInstanceStatus",
