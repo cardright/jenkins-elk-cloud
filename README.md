@@ -11,5 +11,8 @@ A Cloudformation template that launches a Jenkins AMI prepackaged with the job. 
 
 ## Configuration: 
 
-Create an AWS VPC with Cloudformation Template with  publicly accessible subnet and the appropriate Security Group.  
+Create an AWS VPC with Cloudformation Template with  publicly accessible subnet and the appropriate Security Group. 
+
+## How to Run 
+Execute the Cloudformation script called  "jenkins_cfn_vpc_template.json"
 
