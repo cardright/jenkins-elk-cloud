@@ -5,99 +5,6 @@
       "c1.medium": {
         "Arch": "PV64"
       },
-      "c1.xlarge": {
-        "Arch": "PV64"
-      },
-      "c3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.large": {
-        "Arch": "HVM64"
-      },
-      "c3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "cc2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "cr1.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "g2.2xlarge": {
-        "Arch": "HVMG2"
-      },
-      "hi1.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "hs1.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.xlarge": {
-        "Arch": "HVM64"
-      },
-      "m1.large": {
-        "Arch": "PV64"
-      },
-      "m1.medium": {
-        "Arch": "PV64"
-      },
-      "m1.small": {
-        "Arch": "PV64"
-      },
-      "m1.xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.2xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.4xlarge": {
-        "Arch": "PV64"
-      },
-      "m2.xlarge": {
-        "Arch": "PV64"
-      },
-      "m3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "m3.large": {
-        "Arch": "HVM64"
-      },
-      "m3.medium": {
-        "Arch": "HVM64"
-      },
-      "m3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.large": {
-        "Arch": "HVM64"
-      },
-      "r3.xlarge": {
-        "Arch": "HVM64"
-      },
       "t1.micro": {
         "Arch": "PV64"
       },
@@ -172,31 +79,7 @@
     "jenkinsServerParam": {
       "AllowedValues": [
         "t2.micro",
-        "t2.small",
-        "t2.medium",
-        "m3.medium",
-        "m3.large",
-        "m3.xlarge",
-        "m3.2xlarge",
-        "c3.large",
-        "c3.xlarge",
-        "c3.2xlarge",
-        "c3.4xlarge",
-        "c3.8xlarge",
-        "r3.large",
-        "r3.xlarge",
-        "r3.2xlarge",
-        "r3.4xlarge",
-        "r3.8xlarge",
-        "i2.xlarge",
-        "i2.2xlarge",
-        "i2.4xlarge",
-        "i2.8xlarge",
-        "hi1.4xlarge",
-        "hs1.8xlarge",
-        "cr1.8xlarge",
-        "cc2.8xlarge",
-        "cg1.4xlarge"
+        "t2.small"
       ],
       "ConstraintDescription": "Must be a valid EC2 instance type.",
       "Default": "m3.medium",
@@ -238,7 +121,7 @@
         "Tags": [
           {
             "Key": "Candidate",
-            "Value": "mkowalsky"
+            "Value": "cardright"
           },
           {
             "Key": "Name",
@@ -253,7 +136,7 @@
         "Tags": [
           {
             "Key": "Candidate",
-            "Value": "mkowalsky"
+            "Value": "cardright"
           }
         ]
       },
@@ -319,7 +202,7 @@
         "Tags": [
           {
             "Key": "CandidateName",
-            "Value": "mkowalsky"
+            "Value": "cardright"
           },
           {
             "Key": "Name",
@@ -343,10 +226,10 @@
                   "Ref": "jenkinsPWParam"
                 },
                 "\n",
-                "wget -O /tmp/jenkins_elk.json https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/jenkins_ELK_cfn_vpc_template.json\n",
-                "wget -O /opt/update-stack.sh https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/update-stack.sh\n",
+                "wget -O /tmp/jenkins_elk.json https://raw.githubusercontent.com/cardright/jenkins-elk-cloud/master/jenkins_ELK_cfn_vpc_template.json\n",
+                "wget -O /opt/update-stack.sh https://raw.githubusercontent.com/cardright/jenkins-elk-cloud/master/update-stack.sh\n",
                 "chmod 754 /opt/update-stack.sh\n",
-                "wget -O /tmp/jenkinsJob.xml https://raw.githubusercontent.com/mkowalsky/jenkins-elk-cloud/master/jenkinsJob.xml\n",
+                "wget -O /tmp/jenkinsJob.xml https://raw.githubusercontent.com/cardright/jenkins-elk-cloud/master/jenkinsJob.xml\n",
                 "curl -u user:",
                 {
                   "Ref": "jenkinsPWParam"
@@ -444,7 +327,7 @@
         "Tags": [
           {
             "Key": "Candidate",
-            "Value": "mkowalsky"
+            "Value": "cardright"
           }
         ],
         "VpcId": {
@@ -503,7 +386,7 @@
         "Tags": [
           {
             "Key": "Candidate",
-            "Value": "mkowalsky"
+            "Value": "cardright"
           },
           {
             "Key": "Name",
